@@ -11,9 +11,7 @@ mkdir ~/bin
 PATH=~/bin:$PATH
 curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
 chmod a+x ~/bin/repo
-mkdir ~/aicp10
-cd ~/aicp10
-git config --global user.name nebrassy
-git config --global user.email nebras30@gmail.com
+mkdir ~/Documents/aicp10
+cd ~/Documents/aicp10
 repo init -u https://github.com/AICP/platform_manifest.git -b q10.0
 repo sync

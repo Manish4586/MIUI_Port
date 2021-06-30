@@ -62,6 +62,7 @@ chmod 755 $PSYSTEM/system/addon.d
 
 cp -af $SVENDOR/etc/MIUI_DualCamera_watermark.png $PVENDOR/etc/MIUI_DualCamera_watermark.png
 
+rm -rf $PSYSTEM/system/app/Lens
 rm -rf $PSYSTEM/system/priv-app/Updater
 
 mv $PSYSTEM/system/etc/device_features/lavender.xml $PSYSTEM/system/etc/device_features/wayne.xml
@@ -71,7 +72,6 @@ mv $PVENDOR/etc/device_features/lavender.xml $PVENDOR/etc/device_features/wayne.
 sed -i "/persist.camera.HAL3.enabled=/c\persist.camera.HAL3.enabled=1
 /persist.vendor.camera.HAL3.enabled=/c\persist.vendor.camera.HAL3.enabled=1
 /ro.product.model=/c\ro.product.model=MI 6X
-/ro.build.id=/c\ro.build.id=MIUI 12 by Nebrassy
 /persist.vendor.camera.exif.model=/c\persist.vendor.camera.exif.model=MI 6X
 /ro.product.name=/c\ro.product.name=wayne
 /ro.product.device=/c\ro.product.device=wayne
@@ -80,6 +80,8 @@ sed -i "/persist.camera.HAL3.enabled=/c\persist.camera.HAL3.enabled=1
 /ro.product.system.model=/c\ro.product.system.model=MI 6X
 /ro.product.system.name=/c\ro.product.system.name=wayne
 /ro.miui.notch=/c\ro.miui.notch=0
+/persist.miui.density_v2=/c\persist.miui.density_v2=480
+/ro.sf.lcd_density=/c\ro.sf.lcd_density=480
 /sys.paper_mode_max_level=/c\sys.paper_mode_max_level=32
 \$ i sys.tianma_nt36672_offset=12
 \$ i sys.tianma_nt36672_length=46
@@ -291,7 +293,7 @@ sed -i "124 i \
 
 ROMVERSION=$(grep ro.system.build.version.incremental= $PSYSTEM/system/build.prop | sed "s/ro.system.build.version.incremental=//g"; )
 sed -i "s%DATE%$(date +%d/%m/%Y)%g
-s/ROMVERSION/$ROMVERSION/g" $OUTP/zip/META-INF/com/google/android/updater-script
+s/ROMVERSION/$ROMVERSION/g"
 
 umount $PSYSTEM
 umount $PVENDOR
@@ -318,7 +320,7 @@ brotli -j -v -q 6 $OUTP/zip/system.new.dat
 brotli -j -v -q 6 $OUTP/zip/vendor.new.dat
 
 cd $OUTP/zip
-zip -ry $OUTP/10_MIUI_12_wayne_$ROMVERSION.zip *
+zip -ry $OUTP/xiaomi.eu_multi_MI6X_$ROMVERSION_v12-10.zip *
 cd $CURRENTDIR
 rm -rf $OUTP/zip
 chown -hR $CURRENTUSER:$CURRENTUSER $OUTP

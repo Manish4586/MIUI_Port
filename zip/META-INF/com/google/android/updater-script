@@ -3,19 +3,8 @@ package_extract_dir("install", "/tmp/install");
 set_metadata_recursive("/tmp/install", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0644);
 set_metadata_recursive("/tmp/install/bin", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0755);
 run_program("/tmp/install/bin/backuptool.sh", "backup", "/dev/block/bootdevice/by-name/system", "ext4");
-ui_print(" ");
-ui_print(" ");
-ui_print("           MIUI 12");
-ui_print(" ");
-ui_print("           ROMVERSION");
-ui_print(" ");
-ui_print("          DATE");
-ui_print(" ");
-ui_print("         By Nebrassy");
-ui_print(" ");
-ui_print("Based on Xiaomi.eu Redmi Note 7 builds");
-ui_print(" ");
 show_progress(0.650000, 0);
+
 ui_print("Patching system image unconditionally...");
 block_image_update("/dev/block/bootdevice/by-name/system", package_extract_file("system.transfer.list"), "system.new.dat.br", "system.patch.dat") ||
   abort("E1001: Failed to update system image.");
@@ -29,3 +18,17 @@ show_progress(0.050000, 5);
 package_extract_file("boot.img", "/dev/block/bootdevice/by-name/boot");
 show_progress(0.200000, 10);
 set_progress(1.000000);
+
+ui_print("Flashing cust partition...");
+block_image_update("/dev/block/bootdevice/by-name/cust", package_extract_file("cust.transfer.list"), "cust.new.dat.br", "cust.patch.dat") ||
+  abort("E2001: Failed to flash cust partition.");
+
+package_extract_file("META-INF/com/xiaomieu/busybox", "/tmp/busybox");
+run_program("/sbin/chmod", "777", "/tmp/busybox");
+
+run_program("/tmp/busybox", "chmod", "660", "/data/data/com.google.android.gms/databases/dg.db");
+run_program("/tmp/busybox", "rm", "-rf", "/data/data/com.google.android.gms/app_dg_cache");
+run_program("/tmp/busybox", "rm", "-f", "/data/data/com.google.android.gms/databases/dg.db");
+package_extract_file("META-INF/com/xiaomieu/dg.db", "/data/data/com.google.android.gms/databases/dg.db");
+run_program("/tmp/busybox", "chmod", "444", "/data/data/com.google.android.gms/databases/dg.db");
+
