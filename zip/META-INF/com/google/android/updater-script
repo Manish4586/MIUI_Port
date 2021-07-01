@@ -4,7 +4,11 @@ set_metadata_recursive("/tmp/install", "uid", 0, "gid", 0, "dmode", 0755, "fmode
 set_metadata_recursive("/tmp/install/bin", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0755);
 run_program("/tmp/install/bin/backuptool.sh", "backup", "/dev/block/bootdevice/by-name/system", "ext4");
 show_progress(0.650000, 0);
-
+ui_print(" ");
+ui_print(" ");
+ui_print("         By Manish4586");
+ui_print(" ");
+ui_print(" ");
 ui_print("Patching system image unconditionally...");
 block_image_update("/dev/block/bootdevice/by-name/system", package_extract_file("system.transfer.list"), "system.new.dat.br", "system.patch.dat") ||
   abort("E1001: Failed to update system image.");

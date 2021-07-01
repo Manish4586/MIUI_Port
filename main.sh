@@ -1,5 +1,6 @@
 SVENDOR=/mnt/vendora2
 SSYSTEM=/mnt/systema2
+PCUST=/mnt/custport
 PVENDOR=/mnt/vendorport
 PSYSTEM=/mnt/systemport
 CURRENTUSER=$4
@@ -19,7 +20,7 @@ mkdir $OUTP
 chown $CURRENTUSER:$CURRENTUSER $OUTP
 cp -Raf $CURRENTDIR/zip $OUTP/
 
-unzip -d $OUTP $PORTZIP system.transfer.list vendor.transfer.list system.new.dat.br vendor.new.dat.br
+unzip -d $OUTP $PORTZIP cust.transfer.list system.transfer.list vendor.transfer.list cust.new.dat.br system.new.dat.br vendor.new.dat.br
 tar --wildcards -xf $STOCKTAR */images/vendor.img */images/system.img
 mv jasmine_global_images*/images/vendor.img $OUTP/vendor.img
 mv jasmine_global_images*/images/system.img $OUTP/system.img
@@ -29,18 +30,22 @@ rm -rf jasmine_global_images*
 simg2img $OUTP/system.img $OUTP/systema2.img
 simg2img $OUTP/vendor.img $OUTP/vendora2.img
 
+brotli -j -v -d $OUTP/cust.new.dat.br -o $OUTP/cust.new.dat
 brotli -j -v -d $OUTP/system.new.dat.br -o $OUTP/system.new.dat
 brotli -j -v -d $OUTP/vendor.new.dat.br -o $OUTP/vendor.new.dat
+$TOOLS/sdat2img/sdat2img.py $OUTP/cust.transfer.list $OUTP/cust.new.dat $OUTP/custport.img
 $TOOLS/sdat2img/sdat2img.py $OUTP/system.transfer.list $OUTP/system.new.dat $OUTP/systemport.img
 $TOOLS/sdat2img/sdat2img.py $OUTP/vendor.transfer.list $OUTP/vendor.new.dat $OUTP/vendorport.img
-rm $OUTP/vendor.img $OUTP/system.img $OUTP/system.new.dat $OUTP/vendor.new.dat $OUTP/system.transfer.list $OUTP/vendor.transfer.list
+rm $OUTP/vendor.img $OUTP/system.img $OUTP/cust.new.dat $OUTP/system.new.dat $OUTP/vendor.new.dat $OUTP/cust.transfer.list $OUTP/system.transfer.list $OUTP/vendor.transfer.list
 
 
 unalias cp || true
+mkdir $PCUST || true
 mkdir $PSYSTEM || true
 mkdir $PVENDOR || true
 mkdir $SVENDOR || true
 mkdir $SSYSTEM || true
+mount -o rw,noatime $OUTP/custport.img $PCUST
 mount -o rw,noatime $OUTP/systemport.img $PSYSTEM
 mount -o rw,noatime $OUTP/vendorport.img $PVENDOR
 mount -o rw,noatime $OUTP/systema2.img $SSYSTEM
@@ -63,7 +68,14 @@ chmod 755 $PSYSTEM/system/addon.d
 cp -af $SVENDOR/etc/MIUI_DualCamera_watermark.png $PVENDOR/etc/MIUI_DualCamera_watermark.png
 
 rm -rf $PSYSTEM/system/app/Lens
-rm -rf $PSYSTEM/system/priv-app/Updater
+rm -rf $PSYSTEM/system/app/Updater
+rm -rf $PSYSTEM/system/app/MiuiBugReport
+rm -rf $PSYSTEM/system/app/MiuiVideoGlobal
+#rm -rf $PSYSTEM/system/priv-app/Music
+rm -rf $PSYSTEM/system/priv-app/MiBrowserGlobal
+rm -rf $PSYSTEM/system/priv-app/MiMover
+#rm -rf $PSYSTEM/system/product/app/GoogleTTS
+#rm -rf $PSYSTEM/system/product/priv-app/Velvet
 
 mv $PSYSTEM/system/etc/device_features/lavender.xml $PSYSTEM/system/etc/device_features/wayne.xml
 mv $PVENDOR/etc/device_features/lavender.xml $PVENDOR/etc/device_features/wayne.xml
@@ -197,6 +209,57 @@ setfattr -h -n security.selinux -v u:object_r:vendor_file:s0 $PVENDOR/lib64/libg
 chmod 644 $PVENDOR/lib64/libgf_hal.so
 chown -hR root:root $PVENDOR/lib64/libgf_hal.so
 
+cp -af $FILES/etc/init/vendor.qti.hardware.servicetracker@1.1-service.rc $PVENDOR/etc/init/vendor.qti.hardware.servicetracker@1.1-service.rc
+setfattr -h -n security.selinux -v u:object_r:vendor_file:s0 $PVENDOR/etc/init/vendor.qti.hardware.servicetracker@1.1-service.rc
+chmod 644 $PVENDOR/etc/init/vendor.qti.hardware.servicetracker@1.1-service.rc
+chown -hR root:root $PVENDOR/etc/init/vendor.qti.hardware.servicetracker@1.1-service.rc
+
+cp -af $FILES/lib/hw/vendor.qti.hardware.servicetracker@1.1-impl.so $PVENDOR/lib/hw/vendor.qti.hardware.servicetracker@1.1-impl.so
+setfattr -h -n security.selinux -v u:object_r:vendor_file:s0 $PVENDOR/lib/hw/vendor.qti.hardware.servicetracker@1.1-impl.so
+chmod 644 $PVENDOR/lib/hw/vendor.qti.hardware.servicetracker@1.1-impl.so
+chown -hR root:root $PVENDOR/lib/hw/vendor.qti.hardware.servicetracker@1.1-impl.so
+
+cp -af $FILES/lib/vendor.qti.hardware.servicetracker@1.0.so $PVENDOR/lib/vendor.qti.hardware.servicetracker@1.0.so
+setfattr -h -n security.selinux -v u:object_r:vendor_file:s0 $PVENDOR/lib/vendor.qti.hardware.servicetracker@1.0.so
+chmod 644 $PVENDOR/lib/vendor.qti.hardware.servicetracker@1.0.so
+chown -hR root:root $PVENDOR/lib/vendor.qti.hardware.servicetracker@1.0.so
+
+cp -af $FILES/lib/vendor.qti.hardware.servicetracker@1.1.so $PVENDOR/lib/vendor.qti.hardware.servicetracker@1.1.so
+setfattr -h -n security.selinux -v u:object_r:vendor_file:s0 $PVENDOR/lib/vendor.qti.hardware.servicetracker@1.1.so
+chmod 644 $PVENDOR/lib/vendor.qti.hardware.servicetracker@1.1.so
+chown -hR root:root $PVENDOR/lib/vendor.qti.hardware.servicetracker@1.1.so
+
+cp -af $FILES/lib64/hw/vendor.qti.hardware.servicetracker@1.1-impl.so $PVENDOR/lib64/hw/vendor.qti.hardware.servicetracker@1.1-impl.so
+setfattr -h -n security.selinux -v u:object_r:vendor_file:s0 $PVENDOR/lib64/hw/vendor.qti.hardware.servicetracker@1.1-impl.so
+chmod 644 $PVENDOR/lib64/hw/vendor.qti.hardware.servicetracker@1.1-impl.so
+chown -hR root:root $PVENDOR/lib64/hw/vendor.qti.hardware.servicetracker@1.1-impl.so
+
+cp -af $FILES/lib64/vendor.qti.hardware.servicetracker@1.0.so $PVENDOR/lib64/vendor.qti.hardware.servicetracker@1.0.so
+setfattr -h -n security.selinux -v u:object_r:vendor_file:s0 $PVENDOR/lib64/vendor.qti.hardware.servicetracker@1.0.so
+chmod 644 $PVENDOR/lib64/vendor.qti.hardware.servicetracker@1.0.so
+chown -hR root:root $PVENDOR/lib64/vendor.qti.hardware.servicetracker@1.0.so
+
+cp -af $FILES/lib64/vendor.qti.hardware.servicetracker@1.1.so $PVENDOR/lib64/vendor.qti.hardware.servicetracker@1.1.so
+setfattr -h -n security.selinux -v u:object_r:vendor_file:s0 $PVENDOR/lib64/vendor.qti.hardware.servicetracker@1.1.so
+chmod 644 $PVENDOR/lib64/vendor.qti.hardware.servicetracker@1.1.so
+chown -hR root:root $PVENDOR/lib64/vendor.qti.hardware.servicetracker@1.1.so
+
+cp -af $FILES/bin/hw/vendor.qti.hardware.servicetracker@1.1-service $PVENDOR/bin/hw/vendor.qti.hardware.servicetracker@1.1-service
+setfattr -h -n security.selinux -v u:object_r:vendor_file:s0 $PVENDOR/bin/hw/vendor.qti.hardware.servicetracker@1.1-service
+chmod 755 $PVENDOR/bin/hw/vendor.qti.hardware.servicetracker@1.1-service
+chown -hR root:root $PVENDOR/bin/hw/vendor.qti.hardware.servicetracker@1.1-service
+
+#Add AOD
+cp -Raf $FILES/MiuiAod $PSYSTEM/system/priv-app/MiuiAod
+chmod 755 $PSYSTEM/system/priv-app/MiuiAod
+chmod 644 $PSYSTEM/system/priv-app/MiuiAod/*
+
+chown -hR root:root $PSYSTEM/system/priv-app/MiuiAod
+chown -hR root:root $PSYSTEM/system/priv-app/MiuiAod/*
+
+setfattr -h -n security.selinux -v u:object_r:system_file:s0 $PSYSTEM/system/priv-app/MiuiAod
+setfattr -h -n security.selinux -v u:object_r:system_file:s0 $PSYSTEM/system/priv-app/MiuiAod/*
+
 cp -af $SSYSTEM/system/usr/keylayout/uinput-fpc.kl $PSYSTEM/system/usr/keylayout/uinput-fpc.kl
 cp -af $SSYSTEM/system/usr/idc/uinput-fpc.idc $PSYSTEM/system/usr/idc/uinput-fpc.idc
 cp -af $SSYSTEM/system/usr/keylayout/uinput-fpc.kl $PSYSTEM/system/usr/keylayout/uinput-fpc.kl
@@ -214,6 +277,18 @@ sed -i "469 c\        <version>1.0</version>
 478d
 479d" $PVENDOR/etc/vintf/manifest.xml
 
+sed -i "749 c\        <fqname>@1.0::IUimRemoteServiceServer/uimRemoteServer1</fqname>" $PVENDOR/etc/vintf/manifest.xml
+sed -i "750 c\    </hal>
+751 c\     <hal format=\"hidl\">
+752 c\         <name>vendor.qti.hardware.servicetracker</name>
+753 c\         <transport>hwbinder</transport>
+754 c\         <version>1.1</version>
+755 c\         <interface>
+756 c\             <name>IServicetracker</name>
+757 c\             <instance>default</instance>
+758 c\         </interface>
+759 c\         <fqname>@1.1::IServicetracker/default</fqname>
+760 c\     </hal>" $PVENDOR/etc/vintf/manifest.xml
 
 rm -rf $PSYSTEM/system/etc/firmware || true
 cp -Raf $SSYSTEM/system/etc/firmware/* $PVENDOR/firmware/ || true
@@ -238,6 +313,7 @@ sed -i "/support_dual_sd_card/c\    <bool name=\"support_dual_sd_card\">true<\/b
 /is_redmi/c\    <bool name=\"is_redmi\">false<\/bool>
 /paper_mode_max_level/c\    <float name=\"paper_mode_max_level\">32.0<\/float>
 /paper_mode_min_level/c\    <float name=\"paper_mode_min_level\">0.0<\/float>
+\$ i <bool name="support_aod">true</bool> 
 /is_18x9_ratio_screen/c\    <bool name=\"is_18x9_ratio_screen\">true<\/bool>" $PSYSTEM/system/etc/device_features/wayne.xml
 
 
@@ -250,6 +326,7 @@ sed -i "/support_dual_sd_card/c\    <bool name=\"support_dual_sd_card\">true<\/b
 /is_redmi/c\    <bool name=\"is_redmi\">false<\/bool>
 /paper_mode_max_level/c\    <float name=\"paper_mode_max_level\">32.0<\/float>
 /paper_mode_min_level/c\    <float name=\"paper_mode_min_level\">0.0<\/float>
+\$ i <bool name="support_aod">true</bool> 
 /is_18x9_ratio_screen/c\    <bool name=\"is_18x9_ratio_screen\">true<\/bool>" $PVENDOR/etc/device_features/wayne.xml
 
 
@@ -292,13 +369,13 @@ sed -i "124 i \
 124 i \    chown system system /sys/touchpanel/double_tap" $PVENDOR/etc/init/hw/init.target.rc
 
 ROMVERSION=$(grep ro.system.build.version.incremental= $PSYSTEM/system/build.prop | sed "s/ro.system.build.version.incremental=//g"; )
-sed -i "s%DATE%$(date +%d/%m/%Y)%g
-s/ROMVERSION/$ROMVERSION/g"
 
+umount $PCUST
 umount $PSYSTEM
 umount $PVENDOR
 umount $SSYSTEM
 umount $SVENDOR
+rmdir $PCUST
 rmdir $PSYSTEM
 rmdir $PVENDOR
 rmdir $SSYSTEM
@@ -307,7 +384,10 @@ rmdir $SVENDOR
 e2fsck -y -f $OUTP/systemport.img
 resize2fs $OUTP/systemport.img 786432
 
-
+img2simg $OUTP/custport.img $OUTP/sparsecust.img
+rm $OUTP/custport.img
+$TOOLS/img2sdat/img2sdat.py -v 4 -o $OUTP/zip -p cust $OUTP/sparsecust.img
+rm $OUTP/sparsecust.img
 img2simg $OUTP/systemport.img $OUTP/sparsesystem.img
 rm $OUTP/systemport.img
 $TOOLS/img2sdat/img2sdat.py -v 4 -o $OUTP/zip -p system $OUTP/sparsesystem.img
@@ -316,11 +396,12 @@ img2simg $OUTP/vendorport.img $OUTP/sparsevendor.img
 rm $OUTP/vendorport.img
 $TOOLS/img2sdat/img2sdat.py -v 4 -o $OUTP/zip -p vendor $OUTP/sparsevendor.img
 rm $OUTP/sparsevendor.img
+brotli -j -v -q 6 $OUTP/zip/cust.new.dat
 brotli -j -v -q 6 $OUTP/zip/system.new.dat
 brotli -j -v -q 6 $OUTP/zip/vendor.new.dat
 
 cd $OUTP/zip
-zip -ry $OUTP/xiaomi.eu_multi_MI6X_$ROMVERSION_v12-10.zip *
+zip -ry $OUTP/xiaomi.eu_multi_MI6X_$(ROMVERSION)_v12-10.zip *
 cd $CURRENTDIR
 rm -rf $OUTP/zip
 chown -hR $CURRENTUSER:$CURRENTUSER $OUTP
