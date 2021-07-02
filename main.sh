@@ -67,6 +67,7 @@ chmod 755 $PSYSTEM/system/addon.d
 
 cp -af $SVENDOR/etc/MIUI_DualCamera_watermark.png $PVENDOR/etc/MIUI_DualCamera_watermark.png
 
+rm -rf $PSYSTEM/system/app/FM
 rm -rf $PSYSTEM/system/app/Lens
 rm -rf $PSYSTEM/system/app/Updater
 rm -rf $PSYSTEM/system/app/MiuiBugReport
