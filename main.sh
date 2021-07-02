@@ -104,12 +104,17 @@ sed -i "/persist.camera.HAL3.enabled=/c\persist.camera.HAL3.enabled=1
 
 sed -i "/ro.build.characteristics=/c\ro.build.characteristics=nosdcard" $PSYSTEM/system/product/build.prop
 
-
-
-
 sed -i "/ro.product.vendor.model=/c\ro.product.vendor.model=MI 6X
 /ro.product.vendor.name=/c\ro.product.vendor.name=wayne
 /ro.product.vendor.device=/c\ro.product.vendor.device=wayne" $PVENDOR/build.prop
+
+
+sed -i "/dalvik.vm.heapstartsize=/c\dalvik.vm.heapstartsize=8m
+/dalvik.vm.heapgrowthlimit=/c\dalvik.vm.heapgrowthlimit=192m
+/dalvik.vm.heapsize=/c\dalvik.vm.heapsize=512m
+/dalvik.vm.heaptargetutilization=/c\dalvik.vm.heaptargetutilization=0.6
+/dalvik.vm.heapminfree=/c\dalvik.vm.heapminfree=8m
+/dalvik.vm.heapmaxfree=/c\dalvik.vm.heapmaxfree=16m" $PVENDOR/build.prop
 
 
 sed -i "/ro.product.odm.device=/c\ro.product.odm.device=wayne
