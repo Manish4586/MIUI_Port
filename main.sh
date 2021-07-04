@@ -72,7 +72,7 @@ rm -rf $PSYSTEM/system/app/Lens
 rm -rf $PSYSTEM/system/app/Updater
 rm -rf $PSYSTEM/system/app/MiuiBugReport
 rm -rf $PSYSTEM/system/app/MiuiVideoGlobal
-#rm -rf $PSYSTEM/system/priv-app/Music
+rm -rf $PSYSTEM/system/priv-app/Music
 rm -rf $PSYSTEM/system/priv-app/MiBrowserGlobal
 rm -rf $PSYSTEM/system/priv-app/MiMover
 #rm -rf $PSYSTEM/system/product/app/GoogleTTS
@@ -92,6 +92,8 @@ sed -i "/persist.camera.HAL3.enabled=/c\persist.camera.HAL3.enabled=1
 /ro.product.system.device=/c\ro.product.system.device=wayne
 /ro.product.system.model=/c\ro.product.system.model=MI 6X
 /ro.product.system.name=/c\ro.product.system.name=wayne
+/ro.build.host=/c\ro.build.host=Manish4586
+/ro.build.user=/c\ro.build.user=manish@blekmegic-pc
 /ro.miui.notch=/c\ro.miui.notch=0
 /persist.miui.density_v2=/c\persist.miui.density_v2=480
 /ro.sf.lcd_density=/c\ro.sf.lcd_density=480
@@ -160,8 +162,14 @@ cp -af $SVENDOR/lib/libvidhance_gyro.so $PVENDOR/lib/libvidhance_gyro.so
 cp -af $SVENDOR/lib/libvidhance.so $PVENDOR/lib/
 
 
-cp -af $SVENDOR/lib/libmmcamera* $PVENDOR/lib/
+rm -rf $PVENDOR/etc/camera/lavender*
+rm -rf $PVENDOR/lib/libmmcamera_lavender*
+rm -rf $PVENDOR/lib/libchromatix_lavender*
+rm -rf $PVENDOR/lib/libactuator_lavender*
 
+cp -af $SVENDOR/lib/libmmcamera* $PVENDOR/lib/
+cp -af $SVENDOR/lib/libactuator* $PVENDOR/lib/
+cp -af $SVENDOR/lib/libchromatix* $PVENDOR/lib/
 cp -af $SVENDOR/lib64/libmmcamera* $PVENDOR/lib64/
 
 cp -f $SVENDOR/lib/hw/camera.sdm660.so $PVENDOR/lib/hw/
